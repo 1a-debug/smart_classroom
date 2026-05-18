@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>教学反馈 - 智慧课堂</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/teaching.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 左侧导航 -->
+        <div class="sidebar">
+            <div class="logo">DeepSeek AI</div>
+            <ul class="menu" id="menu">
+                <li data-page="dashboard">归于需求</li>
+                <li data-page="feedback">教学反馈结果</li>
+                <li data-page="action">上课动作</li>
+                <li class="active" data-page="teaching">教学反馈</li>
+                <li data-page="manage">发现管理</li>
+                <li data-page="project">反馈工程</li>
+            </ul>
+        </div>
+
+        <!-- 右侧内容 -->
+        <div class="main">
+            <div class="header">教学反馈分析</div>
+
+            <!-- 筛选栏 -->
+            <div class="filter-bar">
+                <div class="date-selector">
+                    <label>选择日期：</label>
+                    <input type="date" id="datePicker" value="2026-03-13">
+                </div>
+                <div class="class-selector">
+                    <label>选择班级：</label>
+                    <select id="classSelect">
+                        <option value="class1">初三(2)班 - 数学</option>
+                        <option value="class2">高一(5)班 - 语文</option>
+                        <option value="class3">初二(3)班 - 英语</option>
+                        <option value="class4">高三(1)班 - 物理</option>
+                    </select>
+                </div>
+                <div class="teacher-selector">
+                    <label>选择教师：</label>
+                    <select id="teacherSelect">
+                        <option value="teacher1">张老师</option>
+                        <option value="teacher2">李老师</option>
+                        <option value="teacher3">王老师</option>
+                        <option value="teacher4">赵老师</option>
+                    </select>
+                </div>
+                <button class="btn" id="analyzeBtn">开始分析</button>
+            </div>
+
+            <!-- 教师评分卡片 -->
+            <div class="score-cards">
+                <div class="score-card overall">
+                    <div class="score-header">
+                        <span class="score-title">综合评分</span>
+                        <span class="score-value" id="overallScore">92</span>
+                        <span class="score-unit">分</span>
+                    </div>
+                    <div class="score-trend">
+                        <span class="trend-up">↑ 5%</span>
+                        <span>较上周</span>
+                    </div>
+                </div>
+                <div class="score-card">
+                    <div class="score-header">
+                        <span class="score-title">教学态度</span>
+                        <span class="score-value" id="attitudeScore">95</span>
+                        <span class="score-unit">分</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 95%; background: #10b981;"></div>
+                    </div>
+                </div>
+                <div class="score-card">
+                    <div class="score-header">
+                        <span class="score-title">教学方法</span>
+                        <span class="score-value" id="methodScore">88</span>
+                        <span class="score-unit">分</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 88%; background: #3b82f6;"></div>
+                    </div>
+                </div>
+                <div class="score-card">
+                    <div class="score-header">
+                        <span class="score-title">课堂互动</span>
+                        <span class="score-value" id="interactionScore">91</span>
+                        <span class="score-unit">分</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 91%; background: #f59e0b;"></div>
+                    </div>
+                </div>
+                <div class="score-card">
+                    <div class="score-header">
+                        <span class="score-title">语言表达</span>
+                        <span class="score-value" id="languageScore">94</span>
+                        <span class="score-unit">分</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 94%; background: #8b5cf6;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 教学概览卡片 -->
+            <div class="teaching-summary">
+                <div class="summary-card">
+                    <div class="card-icon">📊</div>
+                    <div class="card-content">
+                        <span class="card-label">授课时长</span>
+                        <span class="card-value" id="teachingTime">45</span>
+                        <span class="card-unit">分钟</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">👥</div>
+                    <div class="card-content">
+                        <span class="card-label">学生人数</span>
+                        <span class="card-value" id="studentCount">42</span>
+                        <span class="card-unit">人</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-content">
+                        <span class="card-label">平均专注度</span>
+                        <span class="card-value" id="avgAttention">86</span>
+                        <span class="card-unit">%</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">📝</div>
+                    <div class="card-content">
+                        <span class="card-label">互动次数</span>
+                        <span class="card-value" id="interactions">124</span>
+                        <span class="card-unit">次</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">❓</div>
+                    <div class="card-content">
+                        <span class="card-label">提问次数</span>
+                        <span class="card-value" id="questionCount">28</span>
+                        <span class="card-unit">次</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">📢</div>
+                    <div class="card-content">
+                        <span class="card-label">讲授时长</span>
+                        <span class="card-value" id="lectureTime">32</span>
+                        <span class="card-unit">分钟</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图表区域第一行 -->
+            <div class="charts-row">
+                <!-- 教学行为分布 -->
+                <div class="chart-card">
+                    <h3>教学行为分布</h3>
+                    <div class="chart-legend">
+                        <div class="legend-item"><span class="dot" style="background: #3b82f6"></span>讲授</div>
+                        <div class="legend-item"><span class="dot" style="background: #10b981"></span>板书</div>
+                        <div class="legend-item"><span class="dot" style="background: #f59e0b"></span>提问</div>
+                        <div class="legend-item"><span class="dot" style="background: #ef4444"></span>解答</div>
+                        <div class="legend-item"><span class="dot" style="background: #8b5cf6"></span>巡视</div>
+                        <div class="legend-item"><span class="dot" style="background: #ec4899"></span>演示</div>
+                    </div>
+                    <div id="teachingPieChart" class="chart" style="height: 250px;"></div>
+                </div>
+
+                <!-- 教学行为时间趋势 -->
+                <div class="chart-card">
+                    <h3>教学行为时间趋势</h3>
+                    <div id="teachingLineChart" class="chart" style="height: 250px;"></div>
+                </div>
+            </div>
+
+            <!-- 图表区域第二行 -->
+            <div class="charts-row">
+                <!-- 学生反应分布 -->
+                <div class="chart-card">
+                    <h3>学生课堂反应</h3>
+                    <div class="chart-legend">
+                        <div class="legend-item"><span class="dot" style="background: #3b82f6"></span>专注</div>
+                        <div class="legend-item"><span class="dot" style="background: #10b981"></span>疑惑</div>
+                        <div class="legend-item"><span class="dot" style="background: #f59e0b"></span>理解</div>
+                        <div class="legend-item"><span class="dot" style="background: #ef4444"></span>分心</div>
+                        <div class="legend-item"><span class="dot" style="background: #8b5cf6"></span>疲倦</div>
+                    </div>
+                    <div id="reactionPieChart" class="chart" style="height: 250px;"></div>
+                </div>
+
+                <!-- 教学效果评估 -->
+                <div class="chart-card">
+                    <h3>教学效果雷达图</h3>
+                    <div id="radarChart" class="chart" style="height: 250px;"></div>
+                </div>
+            </div>
+
+            <!-- 课堂节奏分析 -->
+            <div class="rhythm-section">
+                <h3>课堂节奏分析</h3>
+                <div class="rhythm-timeline">
+                    <div class="rhythm-phase" style="left: 0%; width: 15%;">
+                        <span class="phase-label">导入</span>
+                        <span class="phase-time">0-7min</span>
+                        <div class="phase-intensity" style="height: 60%;"></div>
+                    </div>
+                    <div class="rhythm-phase" style="left: 15%; width: 25%;">
+                        <span class="phase-label">讲授</span>
+                        <span class="phase-time">7-18min</span>
+                        <div class="phase-intensity" style="height: 85%;"></div>
+                    </div>
+                    <div class="rhythm-phase" style="left: 40%; width: 20%;">
+                        <span class="phase-label">互动</span>
+                        <span class="phase-time">18-27min</span>
+                        <div class="phase-intensity" style="height: 90%;"></div>
+                    </div>
+                    <div class="rhythm-phase" style="left: 60%; width: 20%;">
+                        <span class="phase-label">练习</span>
+                        <span class="phase-time">27-36min</span>
+                        <div class="phase-intensity" style="height: 70%;"></div>
+                    </div>
+                    <div class="rhythm-phase" style="left: 80%; width: 20%;">
+                        <span class="phase-label">总结</span>
+                        <span class="phase-time">36-45min</span>
+                        <div class="phase-intensity" style="height: 50%;"></div>
+                    </div>
+                </div>
+                <div class="rhythm-analysis">
+                    <p><span class="badge good">👍 优点：</span>互动环节设计合理，学生参与度高</p>
+                    <p><span class="badge warning">⚠️ 建议：</span>练习时间略短，可适当延长5分钟</p>
+                </div>
+            </div>
+
+            <!-- 教学细节分析 -->
+            <div class="details-section">
+                <h3>教学细节分析</h3>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-header">
+                            <span class="detail-title">语言速度</span>
+                            <span class="detail-value good">适中</span>
+                        </div>
+                        <div class="detail-desc">平均语速 120字/分钟，适合学生理解</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-header">
+                            <span class="detail-title">板书频次</span>
+                            <span class="detail-value warning">偏少</span>
+                        </div>
+                        <div class="detail-desc">共板书8次，建议增加重点内容的板书</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-header">
+                            <span class="detail-title">提问分布</span>
+                            <span class="detail-value good">均匀</span>
+                        </div>
+                        <div class="detail-desc">提问覆盖了75%的学生，分布合理</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-header">
+                            <span class="detail-title">走动范围</span>
+                            <span class="detail-value good">充分</span>
+                        </div>
+                        <div class="detail-desc">讲台区域为主，偶尔走到学生中间</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-header">
+                            <span class="detail-title">手势使用</span>
+                            <span class="detail-value good">丰富</span>
+                        </div>
+                        <div class="detail-desc">手势自然，有助于学生理解</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-header">
+                            <span class="detail-title">眼神交流</span>
+                            <span class="detail-value warning">不足</span>
+                        </div>
+                        <div class="detail-desc">多注视后排学生，增强互动感</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 教学反馈建议 -->
+            <div class="feedback-suggestions">
+                <h3>📋 教学改进建议</h3>
+                <div class="suggestions-tabs">
+                    <button class="suggestion-tab active" data-type="immediate">即时改进</button>
+                    <button class="suggestion-tab" data-type="shortterm">短期优化</button>
+                    <button class="suggestion-tab" data-type="longterm">长期发展</button>
+                </div>
+                <div class="suggestions-content" id="suggestionsContent">
+                    <ul id="suggestionsList">
+                        <!-- 动态加载建议 -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 历史评分趋势 -->
+            <div class="history-section">
+                <h3>历史评分趋势</h3>
+                <div id="historyChart" class="chart" style="height: 200px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/teaching.js"></script>
+</body>
+
+</html>

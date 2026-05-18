@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>反馈工程 - 智慧课堂</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/project.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 左侧导航 -->
+        <div class="sidebar">
+            <div class="logo">DeepSeek AI</div>
+            <ul class="menu" id="menu">
+                <li data-page="dashboard">归于需求</li>
+                <li data-page="feedback">教学反馈结果</li>
+                <li data-page="action">上课动作</li>
+                <li data-page="teaching">教学反馈</li>
+                <li data-page="manage">发现管理</li>
+                <li class="active" data-page="project">反馈工程</li>
+            </ul>
+        </div>
+
+        <!-- 右侧内容 -->
+        <div class="main">
+            <div class="header">反馈工程</div>
+
+            <!-- 统计卡片 -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon blue">📋</div>
+                    <div class="stat-content">
+                        <span class="stat-label">反馈模板</span>
+                        <span class="stat-value" id="templateCount">24</span>
+                        <span class="stat-unit">个</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">📊</div>
+                    <div class="stat-content">
+                        <span class="stat-label">今日反馈</span>
+                        <span class="stat-value" id="todayFeedback">156</span>
+                        <span class="stat-unit">条</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">📈</div>
+                    <div class="stat-content">
+                        <span class="stat-label">本周反馈</span>
+                        <span class="stat-value" id="weekFeedback">892</span>
+                        <span class="stat-unit">条</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">👥</div>
+                    <div class="stat-content">
+                        <span class="stat-label">参与教师</span>
+                        <span class="stat-value" id="teacherCount">18</span>
+                        <span class="stat-unit">人</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 标签页导航 -->
+            <div class="project-tabs">
+                <button class="tab-btn active" data-tab="templates">反馈模板</button>
+                <button class="tab-btn" data-tab="history">反馈历史</button>
+                <button class="tab-btn" data-tab="settings">反馈设置</button>
+                <button class="tab-btn" data-tab="analysis">数据分析</button>
+            </div>
+
+            <!-- ========== 反馈模板标签页 ========== -->
+            <div class="tab-panel active" id="templatesTab">
+                <div class="panel-header">
+                    <h3>反馈模板管理</h3>
+                    <button class="btn primary" id="createTemplateBtn">
+                        <span>➕</span> 新建模板
+                    </button>
+                </div>
+
+                <!-- 模板分类 -->
+                <div class="template-categories">
+                    <button class="category-btn active" data-category="all">全部</button>
+                    <button class="category-btn" data-category="teaching">教学反馈</button>
+                    <button class="category-btn" data-category="behavior">行为反馈</button>
+                    <button class="category-btn" data-category="academic">学业反馈</button>
+                    <button class="category-btn" data-category="communication">沟通反馈</button>
+                </div>
+
+                <!-- 模板列表 -->
+                <div class="templates-grid" id="templatesGrid">
+                    <!-- 动态加载模板卡片 -->
+                </div>
+            </div>
+
+            <!-- ========== 反馈历史标签页 ========== -->
+            <div class="tab-panel" id="historyTab">
+                <div class="panel-header">
+                    <h3>反馈历史记录</h3>
+                    <div class="history-filters">
+                        <input type="text" id="historySearch" placeholder="搜索教师、学生或内容...">
+                        <select id="historyType">
+                            <option value="all">全部类型</option>
+                            <option value="teaching">教学反馈</option>
+                            <option value="behavior">行为反馈</option>
+                            <option value="academic">学业反馈</option>
+                            <option value="communication">沟通反馈</option>
+                        </select>
+                        <input type="date" id="historyDate" value="2026-03-13">
+                        <button class="btn" id="searchHistoryBtn">搜索</button>
+                    </div>
+                </div>
+
+                <!-- 历史记录列表 -->
+                <div class="history-list" id="historyList">
+                    <!-- 动态加载历史记录 -->
+                </div>
+
+                <!-- 分页 -->
+                <div class="pagination" id="historyPagination">
+                    <!-- 动态加载分页 -->
+                </div>
+            </div>
+
+            <!-- ========== 反馈设置标签页 ========== -->
+            <div class="tab-panel" id="settingsTab">
+                <h3>反馈设置</h3>
+
+                <div class="settings-grid">
+                    <!-- 反馈规则设置 -->
+                    <div class="settings-card">
+                        <h4>📋 反馈规则设置</h4>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="autoFeedback" checked>
+                                自动生成反馈
+                            </label>
+                            <span class="setting-desc">课后自动生成教学反馈报告</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="behaviorAlert" checked>
+                                行为异常提醒
+                            </label>
+                            <span class="setting-desc">发现异常行为时及时提醒</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="attentionAlert" checked>
+                                专注度下降提醒
+                            </label>
+                            <span class="setting-desc">专注度低于60%时提醒</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="dailyReport">
+                                每日反馈报告
+                            </label>
+                            <span class="setting-desc">每天发送反馈总结报告</span>
+                        </div>
+                    </div>
+
+                    <!-- 反馈模板默认设置 -->
+                    <div class="settings-card">
+                        <h4>📝 模板默认设置</h4>
+                        <div class="setting-item">
+                            <span class="setting-label">默认反馈类型</span>
+                            <select id="defaultType">
+                                <option value="teaching">教学反馈</option>
+                                <option value="behavior">行为反馈</option>
+                                <option value="academic">学业反馈</option>
+                                <option value="communication">沟通反馈</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">默认语言风格</span>
+                            <select id="defaultStyle">
+                                <option value="formal">正式</option>
+                                <option value="friendly">友好</option>
+                                <option value="encouraging">鼓励性</option>
+                                <option value="professional">专业</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">默认模板排序</span>
+                            <select id="defaultSort">
+                                <option value="usage">按使用频率</option>
+                                <option value="name">按名称</option>
+                                <option value="create">按创建时间</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 通知设置 -->
+                    <div class="settings-card">
+                        <h4>🔔 通知设置</h4>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="emailNotify" checked>
+                                邮件通知
+                            </label>
+                            <input type="email" id="notifyEmail" placeholder="输入邮箱地址" value="teacher@school.com">
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="smsNotify">
+                                短信通知
+                            </label>
+                            <input type="tel" id="notifyPhone" placeholder="输入手机号码">
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="wechatNotify" checked>
+                                微信通知
+                            </label>
+                            <input type="text" id="notifyWechat" placeholder="输入微信号">
+                        </div>
+                    </div>
+
+                    <!-- 数据导出设置 -->
+                    <div class="settings-card">
+                        <h4>📊 数据导出设置</h4>
+                        <div class="setting-item">
+                            <span class="setting-label">导出格式</span>
+                            <select id="exportFormat">
+                                <option value="excel">Excel</option>
+                                <option value="pdf">PDF</option>
+                                <option value="csv">CSV</option>
+                                <option value="json">JSON</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">导出时间范围</span>
+                            <select id="exportRange">
+                                <option value="today">今日</option>
+                                <option value="week">本周</option>
+                                <option value="month">本月</option>
+                                <option value="custom">自定义</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="autoExport">
+                                自动导出
+                            </label>
+                            <select id="autoExportTime">
+                                <option value="daily">每天</option>
+                                <option value="weekly">每周</option>
+                                <option value="monthly">每月</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 权限设置 -->
+                    <div class="settings-card">
+                        <h4>🔐 权限设置</h4>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="teacherEdit" checked>
+                                教师可编辑模板
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="teacherCreate" checked>
+                                教师可创建模板
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="adminOnly">
+                                仅管理员可删除
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="shareTemplates" checked>
+                                共享模板库
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 保存按钮 -->
+                    <div class="settings-card save-card">
+                        <button class="btn primary" id="saveSettings">保存设置</button>
+                        <button class="btn" id="resetSettings">恢复默认</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 数据分析标签页 ========== -->
+            <div class="tab-panel" id="analysisTab">
+                <h3>反馈数据分析</h3>
+
+                <!-- 时间范围选择 -->
+                <div class="analysis-controls">
+                    <select id="analysisRange">
+                        <option value="week">最近7天</option>
+                        <option value="month">最近30天</option>
+                        <option value="quarter">最近90天</option>
+                        <option value="year">今年</option>
+                    </select>
+                    <button class="btn" id="refreshAnalysis">刷新数据</button>
+                </div>
+
+                <!-- 分析图表网格 -->
+                <div class="analysis-grid">
+                    <!-- 反馈数量趋势 -->
+                    <div class="analysis-card">
+                        <h4>反馈数量趋势</h4>
+                        <div id="trendChart" class="chart" style="height: 250px;"></div>
+                    </div>
+
+                    <!-- 反馈类型分布 -->
+                    <div class="analysis-card">
+                        <h4>反馈类型分布</h4>
+                        <div id="typeChart" class="chart" style="height: 250px;"></div>
+                    </div>
+
+                    <!-- 教师反馈排行 -->
+                    <div class="analysis-card">
+                        <h4>教师反馈排行</h4>
+                        <div id="teacherRank" class="rank-list">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+
+                    <!-- 班级反馈排行 -->
+                    <div class="analysis-card">
+                        <h4>班级反馈排行</h4>
+                        <div id="classRank" class="rank-list">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+
+                    <!-- 反馈响应时间 -->
+                    <div class="analysis-card">
+                        <h4>平均响应时间</h4>
+                        <div id="responseChart" style="height: 200px;"></div>
+                    </div>
+
+                    <!-- 反馈满意度 -->
+                    <div class="analysis-card">
+                        <h4>反馈满意度</h4>
+                        <div id="satisfactionChart" style="height: 200px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建模板模态框 -->
+    <div class="modal" id="templateModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>创建新模板</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="templateForm">
+                    <div class="form-group">
+                        <label>模板名称</label>
+                        <input type="text" id="templateName" placeholder="例如：课堂专注度反馈">
+                    </div>
+                    <div class="form-group">
+                        <label>模板类型</label>
+                        <select id="templateType">
+                            <option value="teaching">教学反馈</option>
+                            <option value="behavior">行为反馈</option>
+                            <option value="academic">学业反馈</option>
+                            <option value="communication">沟通反馈</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>模板内容</label>
+                        <textarea id="templateContent" rows="6" placeholder="输入反馈模板内容，使用 {{变量名}} 插入变量"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>可用变量</label>
+                        <div class="variable-tags">
+                            <span class="variable-tag">{{学生姓名}}</span>
+                            <span class="variable-tag">{{教师姓名}}</span>
+                            <span class="variable-tag">{{班级}}</span>
+                            <span class="variable-tag">{{日期}}</span>
+                            <span class="variable-tag">{{专注度}}</span>
+                            <span class="variable-tag">{{互动次数}}</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="setAsDefault"> 设为默认模板
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="cancelTemplate">取消</button>
+                <button class="btn primary" id="saveTemplate">保存模板</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/project.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>发现管理 - 智慧课堂</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/manage.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 左侧导航 -->
+        <div class="sidebar">
+            <div class="logo">DeepSeek AI</div>
+            <ul class="menu" id="menu">
+                <li data-page="dashboard">归于需求</li>
+                <li data-page="feedback">教学反馈结果</li>
+                <li data-page="action">上课动作</li>
+                <li data-page="teaching">教学反馈</li>
+                <li class="active" data-page="manage">发现管理</li>
+                <li data-page="project">反馈工程</li>
+            </ul>
+        </div>
+
+        <!-- 右侧内容 -->
+        <div class="main">
+            <div class="header">发现管理</div>
+
+            <!-- 筛选和搜索栏 -->
+            <div class="filter-bar">
+                <div class="date-range">
+                    <label>日期范围：</label>
+                    <input type="date" id="startDate" value="2026-03-01">
+                    <span>至</span>
+                    <input type="date" id="endDate" value="2026-03-13">
+                </div>
+                <div class="class-selector">
+                    <label>班级：</label>
+                    <select id="classSelect">
+                        <option value="all">全部班级</option>
+                        <option value="class1">初三(2)班</option>
+                        <option value="class2">高一(5)班</option>
+                        <option value="class3">初二(3)班</option>
+                        <option value="class4">高三(1)班</option>
+                    </select>
+                </div>
+                <div class="type-selector">
+                    <label>类型：</label>
+                    <select id="typeSelect">
+                        <option value="all">全部类型</option>
+                        <option value="attention">专注度问题</option>
+                        <option value="behavior">行为异常</option>
+                        <option value="emotion">情绪问题</option>
+                        <option value="interaction">互动不足</option>
+                    </select>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="搜索学生、教师或关键词...">
+                    <button class="search-btn">🔍</button>
+                </div>
+                <button class="btn" id="filterBtn">筛选</button>
+            </div>
+
+            <!-- 预警统计卡片 -->
+            <div class="alert-stats">
+                <div class="stat-card warning">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-content">
+                        <span class="stat-label">待处理预警</span>
+                        <span class="stat-value" id="pendingAlerts">23</span>
+                        <span class="stat-unit">条</span>
+                    </div>
+                </div>
+                <div class="stat-card critical">
+                    <div class="stat-icon">🔴</div>
+                    <div class="stat-content">
+                        <span class="stat-label">严重问题</span>
+                        <span class="stat-value" id="criticalIssues">8</span>
+                        <span class="stat-unit">条</span>
+                    </div>
+                </div>
+                <div class="stat-card normal">
+                    <div class="stat-icon">🟡</div>
+                    <div class="stat-content">
+                        <span class="stat-label">一般问题</span>
+                        <span class="stat-value" id="normalIssues">15</span>
+                        <span class="stat-unit">条</span>
+                    </div>
+                </div>
+                <div class="stat-card resolved">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <span class="stat-label">已解决</span>
+                        <span class="stat-value" id="resolvedIssues">47</span>
+                        <span class="stat-unit">条</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图表区域：问题趋势和类型分布 -->
+            <div class="charts-row">
+                <div class="chart-card">
+                    <h3>问题趋势 <span class="subtitle">近7天</span></h3>
+                    <div id="trendChart" class="chart" style="height: 200px;"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>问题类型分布</h3>
+                    <div id="typeChart" class="chart" style="height: 200px;"></div>
+                </div>
+            </div>
+
+            <!-- 标签页：问题列表 / 处理记录 / 统计分析 -->
+            <div class="tabs-section">
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="issues">问题列表</button>
+                    <button class="tab-btn" data-tab="records">处理记录</button>
+                    <button class="tab-btn" data-tab="statistics">统计分析</button>
+                </div>
+
+                <!-- 问题列表标签页 -->
+                <div class="tab-content active" id="issuesTab">
+                    <div class="issues-header">
+                        <div class="issue-filters">
+                            <select id="issueStatusFilter">
+                                <option value="all">全部状态</option>
+                                <option value="pending">待处理</option>
+                                <option value="processing">处理中</option>
+                                <option value="resolved">已解决</option>
+                            </select>
+                            <select id="issueLevelFilter">
+                                <option value="all">全部级别</option>
+                                <option value="critical">严重</option>
+                                <option value="warning">警告</option>
+                                <option value="info">一般</option>
+                            </select>
+                        </div>
+                        <button class="btn export-btn" id="exportBtn">导出数据</button>
+                    </div>
+
+                    <div class="issues-list" id="issuesList">
+                        <!-- 动态加载问题列表 -->
+                    </div>
+
+                    <div class="pagination" id="pagination">
+                        <!-- 动态加载分页 -->
+                    </div>
+                </div>
+
+                <!-- 处理记录标签页 -->
+                <div class="tab-content" id="recordsTab">
+                    <div class="timeline" id="timeline">
+                        <!-- 动态加载处理记录 -->
+                    </div>
+                </div>
+
+                <!-- 统计分析标签页 -->
+                <div class="tab-content" id="statisticsTab">
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <h4>问题高发时段</h4>
+                            <div id="timeChart" style="height: 200px;"></div>
+                        </div>
+                        <div class="stats-card">
+                            <h4>问题高发班级</h4>
+                            <div id="classChart" style="height: 200px;"></div>
+                        </div>
+                        <div class="stats-card">
+                            <h4>问题高发学生</h4>
+                            <div class="rank-list" id="studentRank">
+                                <!-- 动态加载 -->
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <h4>处理效率</h4>
+                            <div id="efficiencyChart" style="height: 200px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快速处理面板 -->
+            <div class="quick-panel">
+                <h3>⚡ 快速处理</h3>
+                <div class="quick-actions">
+                    <button class="quick-btn" id="batchResolve">
+                        <span class="btn-icon">✅</span>
+                        <span>批量解决</span>
+                    </button>
+                    <button class="quick-btn" id="batchAssign">
+                        <span class="btn-icon">👥</span>
+                        <span>批量分配</span>
+                    </button>
+                    <button class="quick-btn" id="generateReport">
+                        <span class="btn-icon">📊</span>
+                        <span>生成报告</span>
+                    </button>
+                    <button class="quick-btn" id="notifyTeachers">
+                        <span class="btn-icon">📢</span>
+                        <span>通知教师</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 异常详情模态框 -->
+            <div class="modal" id="issueModal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>问题详情</h3>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body" id="modalBody">
+                        <!-- 动态加载详情 -->
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" id="markProcessing">标记处理中</button>
+                        <button class="btn btn-primary" id="markResolved">标记已解决</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/manage.js"></script>
+</body>
+
+</html>

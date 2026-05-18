@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>智慧课堂行为分析系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 左侧导航 - 可抽离为组件 -->
+        <div class="sidebar">
+            <div class="logo">DeepSeek AI</div>
+            <ul class="menu" id="menu">
+                <li class="active" data-page="dashboard">归于需求</li>
+                <li data-page="feedback">教学反馈结果</li>
+                <li data-page="action">上课动作</li>
+                <li data-page="teaching">教学反馈</li>
+                <li data-page="manage">发现管理</li>
+                <li data-page="project">反馈工程</li>
+            </ul>
+        </div>
+
+        <!-- 右侧内容 -->
+        <div class="main">
+            <div class="header" id="pageTitle">智慧课堂行为分析系统</div>
+
+            <!-- 网格布局 -->
+            <div class="grid">
+                <!-- 左上卡片 -->
+                <div class="card">
+                    <h3>自然语言驱动教学行为数据</h3>
+                    <img class="class-img" src="assets/classroom.png" alt="课堂">
+                    <p style="margin-top:10px;color:#666">
+                        自然语言驱动教学结果分析，课堂行为识别数据。
+                    </p>
+                </div>
+
+                <!-- 右上卡片 -->
+                <div class="card">
+                    <h3>Mediapipe分析</h3>
+                    <div class="face-box" id="faceBox">
+                        <!-- 动态加载头像 -->
+                    </div>
+                    <div id="lineChart" class="chart"></div>
+                </div>
+            </div>
+
+            <!-- 第二行网格 -->
+            <div class="grid2">
+                <!-- 左下卡片 -->
+                <div class="card">
+                    <h3>专注度分析</h3>
+                    <div class="focus-box">
+                        <div class="circle" id="focusCircle">85%</div>
+                        <div class="bars" id="focusBars">
+                            <!-- 动态加载进度条 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右下卡片 -->
+                <div class="card">
+                    <h3>学生上课维度</h3>
+                    <div id="barChart" class="chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

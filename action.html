@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>上课动作 - 智慧课堂</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/action.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 左侧导航 -->
+        <div class="sidebar">
+            <div class="logo">DeepSeek AI</div>
+            <ul class="menu" id="menu">
+                <li data-page="dashboard">归于需求</li>
+                <li data-page="feedback">教学反馈结果</li>
+                <li class="active" data-page="action">上课动作</li>
+                <li data-page="teaching">教学反馈</li>
+                <li data-page="manage">发现管理</li>
+                <li data-page="project">反馈工程</li>
+            </ul>
+        </div>
+
+        <!-- 右侧内容 -->
+        <div class="main">
+            <div class="header">上课动作识别分析</div>
+
+            <!-- 视频上传区域 -->
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📹</div>
+                    <div class="upload-text">点击或拖拽视频文件到此区域上传</div>
+                    <div class="upload-hint">支持 MP4, AVI, MOV 格式，最大 500MB</div>
+                    <input type="file" id="videoInput" accept="video/*" style="display: none;">
+                    <button class="btn upload-btn" id="selectVideoBtn">选择视频</button>
+                </div>
+                <div class="video-info" id="videoInfo" style="display: none;">
+                    <div class="video-preview">
+                        <video id="videoPreview" controls style="max-width: 100%; max-height: 200px;"></video>
+                    </div>
+                    <div class="video-details">
+                        <p><span class="label">文件名：</span><span id="videoName"></span></p>
+                        <p><span class="label">视频大小：</span><span id="videoSize"></span></p>
+                        <p><span class="label">视频时长：</span><span id="videoDuration"></span></p>
+                    </div>
+                    <button class="btn analyze-video-btn" id="analyzeVideoBtn">开始分析</button>
+                </div>
+            </div>
+
+            <!-- 分析进度条（默认隐藏） -->
+            <div class="progress-section" id="progressSection" style="display: none;">
+                <div class="progress-info">
+                    <span class="progress-label">分析进度</span>
+                    <span class="progress-percent" id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                </div>
+                <div class="progress-status" id="progressStatus">准备分析...</div>
+            </div>
+
+            <!-- 动作识别结果概览卡片（默认隐藏） -->
+            <div class="action-summary" id="actionSummary" style="display: none;">
+                <div class="summary-header">
+                    <h3>动作识别结果</h3>
+                    <span class="video-time" id="totalTime">总时长: 00:00</span>
+                </div>
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="card-icon">👋</div>
+                        <div class="card-content">
+                            <span class="card-label">举手次数</span>
+                            <span class="card-value" id="handupCount">0</span>
+                            <span class="card-unit">次</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon">✍️</div>
+                        <div class="card-content">
+                            <span class="card-label">写字时长</span>
+                            <span class="card-value" id="writingTime">0</span>
+                            <span class="card-unit">分钟</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon">📖</div>
+                        <div class="card-content">
+                            <span class="card-label">阅读时长</span>
+                            <span class="card-value" id="readingTime">0</span>
+                            <span class="card-unit">分钟</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon">💤</div>
+                        <div class="card-content">
+                            <span class="card-label">睡觉时长</span>
+                            <span class="card-value" id="sleepingTime">0</span>
+                            <span class="card-unit">分钟</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon">🗣️</div>
+                        <div class="card-content">
+                            <span class="card-label">说话次数</span>
+                            <span class="card-value" id="speakingCount">0</span>
+                            <span class="card-unit">次</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon">👀</div>
+                        <div class="card-content">
+                            <span class="card-label">转头次数</span>
+                            <span class="card-value" id="turnCount">0</span>
+                            <span class="card-unit">次</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图表区域 -->
+            <div class="charts-row" id="chartsRow" style="display: none;">
+                <!-- 动作分布饼图 -->
+                <div class="chart-card">
+                    <h3>动作分布</h3>
+                    <div class="chart-legend">
+                        <div class="legend-item"><span class="dot" style="background: #3b82f6"></span>举手</div>
+                        <div class="legend-item"><span class="dot" style="background: #10b981"></span>写字</div>
+                        <div class="legend-item"><span class="dot" style="background: #f59e0b"></span>阅读</div>
+                        <div class="legend-item"><span class="dot" style="background: #ef4444"></span>睡觉</div>
+                        <div class="legend-item"><span class="dot" style="background: #8b5cf6"></span>说话</div>
+                        <div class="legend-item"><span class="dot" style="background: #ec4899"></span>转头</div>
+                    </div>
+                    <div id="actionPieChart" class="chart" style="height: 250px;"></div>
+                </div>
+
+                <!-- 动作时间趋势图 -->
+                <div class="chart-card">
+                    <h3>动作时间趋势</h3>
+                    <div id="actionLineChart" class="chart" style="height: 250px;"></div>
+                </div>
+            </div>
+
+            <!-- 动作时间轴 -->
+            <div class="timeline-section" id="timelineSection" style="display: none;">
+                <h3>动作时间轴 <span class="subtitle">(按时间顺序)</span></h3>
+                <div class="timeline-controls">
+                    <button class="timeline-filter active" data-filter="all">全部</button>
+                    <button class="timeline-filter" data-filter="handup">举手</button>
+                    <button class="timeline-filter" data-filter="writing">写字</button>
+                    <button class="timeline-filter" data-filter="reading">阅读</button>
+                    <button class="timeline-filter" data-filter="sleeping">睡觉</button>
+                    <button class="timeline-filter" data-filter="speaking">说话</button>
+                    <button class="timeline-filter" data-filter="turn">转头</button>
+                </div>
+                <div class="timeline-container" id="timelineContainer">
+                    <!-- 动态加载时间轴 -->
+                </div>
+            </div>
+
+            <!-- 学生动作排行榜 -->
+            <div class="ranking-section" id="rankingSection" style="display: none;">
+                <h3>学生动作排行榜</h3>
+                <div class="ranking-tabs">
+                    <button class="ranking-tab active" data-type="handup">举手最多</button>
+                    <button class="ranking-tab" data-type="writing">写字最多</button>
+                    <button class="ranking-tab" data-type="speaking">说话最多</button>
+                    <button class="ranking-tab" data-type="sleeping">睡觉最多</button>
+                </div>
+                <div class="ranking-list" id="rankingList">
+                    <!-- 动态加载排行榜 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/action.js"></script>
+</body>
+
+</html>

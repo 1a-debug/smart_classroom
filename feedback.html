@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>教学反馈成果 - 智慧课堂</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/feedback.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 左侧导航 -->
+        <div class="sidebar">
+            <div class="logo">DeepSeek AI</div>
+            <ul class="menu" id="menu">
+                <li data-page="dashboard">归于需求</li>
+                <li class="active" data-page="feedback">教学反馈结果</li>
+                <li data-page="action">上课动作</li>
+                <li data-page="teaching">教学反馈</li>
+                <li data-page="manage">发现管理</li>
+                <li data-page="project">反馈工程</li>
+            </ul>
+        </div>
+
+        <!-- 右侧内容 -->
+        <div class="main">
+            <div class="header">教学反馈成果</div>
+
+            <!-- 筛选栏 -->
+            <div class="filter-bar">
+                <div class="date-selector">
+                    <label>选择日期：</label>
+                    <input type="date" id="datePicker" value="2026-03-12">
+                </div>
+                <div class="class-selector">
+                    <label>选择班级：</label>
+                    <select id="classSelect">
+                        <option value="class1">初三(2)班 - 数学</option>
+                        <option value="class2">高一(5)班 - 语文</option>
+                        <option value="class3">初二(3)班 - 英语</option>
+                        <option value="class4">高三(1)班 - 物理</option>
+                    </select>
+                </div>
+                <button class="btn" id="analyzeBtn">开始分析</button>
+            </div>
+
+            <!-- 整体概览卡片 -->
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="card-icon">📊</div>
+                    <div class="card-content">
+                        <span class="card-label">总分析时长</span>
+                        <span class="card-value" id="totalTime">45:30</span>
+                        <span class="card-unit">分钟</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">👥</div>
+                    <div class="card-content">
+                        <span class="card-label">参与学生</span>
+                        <span class="card-value" id="studentCount">32</span>
+                        <span class="card-unit">人</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-content">
+                        <span class="card-label">平均专注度</span>
+                        <span class="card-value" id="avgAttention">85</span>
+                        <span class="card-unit">%</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-icon">📝</div>
+                    <div class="card-content">
+                        <span class="card-label">互动次数</span>
+                        <span class="card-value" id="interactions">156</span>
+                        <span class="card-unit">次</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 行为分布图表区域 -->
+            <!-- 行为分布图表区域 -->
+            <div class="charts-row">
+                <div class="chart-card">
+                    <h3>课堂行为分布</h3>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <span class="dot" style="background: #3b82f6"></span>
+                            <span>听课</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot" style="background: #10b981"></span>
+                            <span>写字</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot" style="background: #f59e0b"></span>
+                            <span>举手</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot" style="background: #ef4444"></span>
+                            <span>睡觉</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot" style="background: #8b5cf6"></span>
+                            <span>其他</span>
+                        </div>
+                    </div>
+                    <div id="behaviorPieChart" class="chart" style="height: 280px;"></div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>行为时间趋势</h3>
+                    <!-- 添加趋势图 -->
+                    <div id="behaviorLineChart" class="chart" style="height: 200px;"></div>
+                    <!-- 添加时间段数据表格 -->
+                    <div class="trend-table-container">
+                        <table class="trend-table">
+                            <thead>
+                                <tr>
+                                    <th>时间段</th>
+                                    <th>听课</th>
+                                    <th>写字</th>
+                                    <th>举手</th>
+                                    <th>睡觉</th>
+                                    <th>其他</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trendTableBody">
+                                <!-- 动态加载数据 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 详细行为时间轴 -->
+            <div class="timeline-section">
+                <h3>行为时间轴 <span class="subtitle">(只显示持续时间 ≥ 1秒)</span></h3>
+                <div class="timeline-container" id="timelineContainer">
+                    <!-- 动态加载时间轴 -->
+                </div>
+            </div>
+
+            <!-- 学生个人分析 -->
+            <div class="students-section">
+                <h3>学生个体分析</h3>
+                <div class="students-grid" id="studentsGrid">
+                    <!-- 动态加载学生卡片 -->
+                </div>
+            </div>
+
+            <!-- 教学建议 -->
+            <div class="suggestions-card">
+                <h3>📋 教学建议</h3>
+                <div class="suggestions-content" id="suggestions">
+                    <ul>
+                        <li>课堂专注度整体良好，但第3节有下降趋势，建议增加互动环节</li>
+                        <li>有3名学生频繁出现睡觉行为，建议关注其课堂状态</li>
+                        <li>举手次数较少，可以多鼓励学生提问</li>
+                        <li>写字行为集中在课程后半段，可适当调整板书时间</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/feedback.js"></script>
+</body>
+
+</html>
